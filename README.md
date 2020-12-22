@@ -1,1 +1,2 @@
-# otus_java_2020_12
+Студент:
+Andrei Voloshin (Андрей Волошин)

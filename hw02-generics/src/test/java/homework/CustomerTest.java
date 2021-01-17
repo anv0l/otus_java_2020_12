@@ -1,5 +1,6 @@
 package homework;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,8 @@ class CustomerTest {
     @DisplayName("Объект Customer как ключ в карте")
     void customerAsKeyTest() {
         //given
-        Customer customer = new Customer(1L, "Ivan", 233);
+        final long customerId = 1L;
+        Customer customer = new Customer(customerId, "Ivan", 233);
         Map<Customer, String> map = new HashMap<>();
 
         String expectedData = "data";
@@ -24,8 +26,7 @@ class CustomerTest {
 
         //when
         long newScore = customer.getScores() + 10;
-        customer.setScores(newScore);
-        String factData = map.get(customer);
+        String factData = map.get(new Customer(customerId, "IvanChangedName", newScore));
 
         //then
         assertThat(factData).isEqualTo(expectedData);

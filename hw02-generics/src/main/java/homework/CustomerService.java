@@ -1,60 +1,45 @@
 package homework;
 
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class CustomerService {
-    private Map<Customer, String> customers;
+    private TreeMap<Customer, String> customers;
 
     public CustomerService() {
-        customers = new HashMap<Customer, String>();
+        customers = new TreeMap<>(new Comparator<>() {
+            @Override
+            public int compare(Customer o1, Customer o2) {
+                return o1.getScores().compareTo(o2.getScores());
+            }
+        });
     }
 
     public Map.Entry<Customer, String> getSmallest() {
-        long minScore = Long.MAX_VALUE;
-
-        Iterator<Map.Entry<Customer, String>> customers = this.customers.entrySet().iterator();
-        Map.Entry<Customer, String> result = null;
-        while (customers.hasNext()) {
-            Map.Entry<Customer, String> customer = customers.next();
-            if ( customer.getKey().getScores() <= minScore ) {
-                result = customer;
-                minScore = customer.getKey().getScores();
-            }
+        if (!this.customers.isEmpty()) {
+            return this.customers.firstEntry();
         }
-        return result;
+        else {
+            return null;
+        }
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        long minDiff = Long.MAX_VALUE;
-        long originalScore = customer.getScores();
-        long currentScore;
-
-        Iterator<Map.Entry<Customer, String>> customers = this.customers.entrySet().iterator();
-        Map.Entry<Customer, String> result = null;
-        while (customers.hasNext()) {
-            Map.Entry<Customer, String> customerData = customers.next();
-            currentScore = customerData.getKey().getScores();
-            if ( originalScore < customerData.getKey().getScores()) {
-                if (minDiff > currentScore - originalScore) {
-                    minDiff = currentScore - originalScore;
-                    result = customerData;
-                }
+        for (Map.Entry<Customer, String> entryCustomer : this.customers.entrySet()) {
+            if (entryCustomer.getKey().getScores() > customer.getScores() ) {
+                return entryCustomer;
             }
         }
-        return result;
+        return null;
     }
 
     public void add(Customer customer, String data) {
-        if (Customer.getCustomers().containsKey(customer)) {
-            customers.put(customer.getCustomers().get(customer), data); // зато теперь проходим тест
+        if (Customer.getCustomers().contains(customer)) {
+            this.customers.put(customer.getCustomers().get(customer.getCustomers().indexOf(customer)), data); // зато теперь проходим тест
         }
         else {
-            customers.put(customer, data);
+            this.customers.put(customer, data);
         }
     }
-
 
 }

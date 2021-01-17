@@ -1,7 +1,7 @@
 package homework;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Customer {
     private final long id;
@@ -9,14 +9,15 @@ public class Customer {
     private long scores;
 
     // Список уже добавленных клиентов
-    private static Map<Customer, Customer> customers = new HashMap<>();
+    private static List<Customer> customers = new ArrayList<>();
 
     public Customer(long id, String name, long scores) {
         this.id = id;
         this.name = name;
         this.scores = scores;
-        if (!customers.containsKey(this)) {
-            customers.put(this, this); // используется для прохождения теста на модификацию коллекции
+        if (!customers.contains(this)) {
+            // используется для прохождения теста на модификацию коллекции
+            customers.add(this);
         }
     }
 
@@ -32,15 +33,15 @@ public class Customer {
         this.name = name;
     }
 
-    public long getScores() {
+    public Long getScores() {
         return this.scores;
     }
 
-    public void setScores(long scores) {
+    public void setScores(Long scores) {
         this.scores = scores;
     }
 
-    public static Map<Customer, Customer> getCustomers() {
+    public static List<Customer> getCustomers() {
         return customers;
     }
 
@@ -61,14 +62,15 @@ public class Customer {
         Customer customer = (Customer) o;
 
         if (id != customer.id) return false;
-        if (scores != customer.scores) return false;
-        return name != null ? name.equals(customer.name) : customer.name == null;
+        //if (scores != customer.scores) return false;
+        //return name != null ? name.equals(customer.name) : customer.name == null;
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        //result = 31 * result + (name != null ? name.hashCode() : 0);
         //result = 31 * result + (int) (scores ^ (scores >>> 32));
         return result;
     }

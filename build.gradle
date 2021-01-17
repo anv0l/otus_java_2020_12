@@ -29,6 +29,7 @@ allprojects {
             imports {
                 mavenBom("org.springframework.boot:spring-boot-dependencies:2.4.1")
             }
+            dependency("com.google.guava:guava:${Versions.guava}")
 
             resolutionStrategy {
                 force("javax.servlet:servlet-api:2.4")

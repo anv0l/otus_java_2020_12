@@ -8,17 +8,10 @@ public class Customer {
     private String name;
     private long scores;
 
-    // Список уже добавленных клиентов
-    private static List<Customer> customers = new ArrayList<>();
-
     public Customer(long id, String name, long scores) {
         this.id = id;
         this.name = name;
         this.scores = scores;
-        if (!customers.contains(this)) {
-            // используется для прохождения теста на модификацию коллекции
-            customers.add(this);
-        }
     }
 
     public long getId() {
@@ -39,10 +32,6 @@ public class Customer {
 
     public void setScores(Long scores) {
         this.scores = scores;
-    }
-
-    public static List<Customer> getCustomers() {
-        return customers;
     }
 
     @Override

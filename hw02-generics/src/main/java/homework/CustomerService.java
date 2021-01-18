@@ -1,6 +1,8 @@
 package homework;
 
 
+import com.sun.source.tree.Tree;
+
 import java.util.*;
 
 public class CustomerService {
@@ -17,7 +19,9 @@ public class CustomerService {
 
     public Map.Entry<Customer, String> getSmallest() {
         if (!this.customers.isEmpty()) {
-            return this.customers.firstEntry();
+            Map.Entry<Customer, String> localEntry = customers.firstEntry();
+            Customer localCustomer = new Customer(localEntry.getKey().getId(), localEntry.getKey().getName(), localEntry.getKey().getScores());
+            return new AbstractMap.SimpleEntry<Customer, String>(localCustomer, localEntry.getValue());
         }
         else {
             return null;
@@ -27,19 +31,15 @@ public class CustomerService {
     public Map.Entry<Customer, String> getNext(Customer customer) {
         for (Map.Entry<Customer, String> entryCustomer : this.customers.entrySet()) {
             if (entryCustomer.getKey().getScores() > customer.getScores() ) {
-                return entryCustomer;
+                Customer localCustomer = new Customer(entryCustomer.getKey().getId(), entryCustomer.getKey().getName(), entryCustomer.getKey().getScores());
+                return new AbstractMap.SimpleEntry<Customer, String>(localCustomer, entryCustomer.getValue());
             }
         }
         return null;
     }
 
     public void add(Customer customer, String data) {
-        if (Customer.getCustomers().contains(customer)) {
-            this.customers.put(customer.getCustomers().get(customer.getCustomers().indexOf(customer)), data); // зато теперь проходим тест
-        }
-        else {
-            this.customers.put(customer, data);
-        }
+        this.customers.put(customer, data);
     }
 
 }

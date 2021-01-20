@@ -6,7 +6,7 @@ import com.sun.source.tree.Tree;
 import java.util.*;
 
 public class CustomerService {
-    private TreeMap<Customer, String> customers;
+    private final TreeMap<Customer, String> customers;
 
     public CustomerService() {
         customers = new TreeMap<>(new Comparator<>() {

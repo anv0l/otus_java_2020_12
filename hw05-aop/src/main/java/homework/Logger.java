@@ -13,7 +13,7 @@ public class Logger {
     }
 
     // не совсем понял, что тут происходит, просто скопировал код
-    static Calculator CreateCalculator() {
+    static Calculator createCalculator() {
         InvocationHandler handler = new LoggerInvocationHandler(new MyCalculator());
         return (Calculator) Proxy.newProxyInstance(Logger.class.getClassLoader(), new Class<?>[]{Calculator.class}, handler);
     }

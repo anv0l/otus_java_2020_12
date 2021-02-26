@@ -75,6 +75,7 @@ public class Vault {
     }
 
     public void withdraw(Float cash) {
+        checkAvailableCash(cash);
         Map<CashCartridge, Integer> withdrawalMap = getWithdrawalMap(cash);
         checkIfThereEnoughNotesInCartridges(withdrawalMap, cash);
 

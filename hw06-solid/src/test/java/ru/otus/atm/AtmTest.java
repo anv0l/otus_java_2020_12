@@ -15,9 +15,9 @@ public class AtmTest {
     @BeforeEach
     public void setupAtm() {
         atm = new Atm();
-        atm.getVault().addCartridge(new CashCartridge(new FiftyDollars(), 50));
-        atm.getVault().addCartridge(new CashCartridge(new TenDollars(), 3));
-        atm.getVault().addCartridge(new CashCartridge(new OneHundredDollars(), 30));
+        atm.addCartridge(new CashCartridge(new FiftyDollars(), 50));
+        atm.addCartridge(new CashCartridge(new TenDollars(), 3));
+        atm.addCartridge(new CashCartridge(new OneHundredDollars(), 30));
         System.out.println("АТМ настроен");
     }
 
@@ -30,19 +30,19 @@ public class AtmTest {
     @DisplayName("Выдача суммы остатка денежных средств")
     @Test
     public void getCashRemainderTest() {
-        float remainder = atm.getVault().getVaultRemainder();
+        float remainder = atm.getVaultRemainder();
         Assertions.assertEquals(remainder, 5530);
     }
 
     @DisplayName("Вклад банкнот разных номиналов")
     @Test
     public void depositVariousNotesTest1() {
-        float initialRemainder = atm.getVault().getVaultRemainder();
+        float initialRemainder = atm.getVaultRemainder();
         atm.deposit(Map.ofEntries(
                 Map.entry(new FiftyDollars(), 10),
                 Map.entry(new TenDollars(), 20)
         ));
-        float newRemainder = atm.getVault().getVaultRemainder();
+        float newRemainder = atm.getVaultRemainder();
 
         Assertions.assertEquals(initialRemainder +
                 new FiftyDollars().getValue() * 10 +
@@ -59,9 +59,9 @@ public class AtmTest {
     @DisplayName("Выдача запрошенной суммы разным кол-вом банкнот")
     @Test
     public void withdrawVariousNotesTest1() {
-        float initialRemainder = atm.getVault().getVaultRemainder();
+        float initialRemainder = atm.getVaultRemainder();
         atm.withdraw(150F);
-        float newRemainder = atm.getVault().getVaultRemainder();
+        float newRemainder = atm.getVaultRemainder();
 
         Assertions.assertEquals(initialRemainder - 150F, newRemainder);
     }
@@ -69,9 +69,9 @@ public class AtmTest {
     @DisplayName("Сумма не может быть выдана: не кратна доступным банктнотам в ячейках")
     @Test
     public void withdrawVariousNotesTest2() {
-        float initialRemainder = atm.getVault().getVaultRemainder();
+        float initialRemainder = atm.getVaultRemainder();
         Assertions.assertThrows(NotEnoughNotesInCartridgesException.class, () -> atm.withdraw(155F));
-        float newRemainder = atm.getVault().getVaultRemainder();
+        float newRemainder = atm.getVaultRemainder();
 
         Assertions.assertEquals(initialRemainder, newRemainder);
     }
@@ -79,11 +79,11 @@ public class AtmTest {
     @DisplayName("Сумма не может быть выдана: превышает общую сумму в АТМ")
     @Test
     public void withdrawVariousNotesTest3()  {
-        float initialRemainder = atm.getVault().getVaultRemainder();
+        float initialRemainder = atm.getVaultRemainder();
         //atm.withdraw(155000F);
         Assertions.assertThrows(WithdrawalExceededVaultRemainderException.class,
                 () -> atm.withdraw(155000F));
-        float newRemainder = atm.getVault().getVaultRemainder();
+        float newRemainder = atm.getVaultRemainder();
 
         Assertions.assertEquals(initialRemainder, newRemainder);
     }
@@ -91,11 +91,11 @@ public class AtmTest {
     @DisplayName("Сумма не может быть выдана: не удаётся составить нужную сумму из имеющихся в ячейках банкнот")
     @Test
     public void withdrawVariousNotesTest4()  {
-        float initialRemainder = atm.getVault().getVaultRemainder();
+        float initialRemainder = atm.getVaultRemainder();
         //atm.withdraw(155000F);
         Assertions.assertThrows(NotEnoughNotesInCartridgesException.class,
                 () -> atm.withdraw(190F));
-        float newRemainder = atm.getVault().getVaultRemainder();
+        float newRemainder = atm.getVaultRemainder();
 
         Assertions.assertEquals(initialRemainder, newRemainder);
     }

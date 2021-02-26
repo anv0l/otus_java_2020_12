@@ -10,18 +10,21 @@ public class Atm {
     public Atm() {
     }
 
-    public Vault getVault() {
-        return this.vault;
+    public void addCartridge(CashCartridge cartridge) {
+        this.vault.addCartridge(cartridge);
+    }
+
+    public Float getVaultRemainder() {
+        return this.vault.getVaultRemainder();
     }
 
     public void withdraw(Float cash) {
-        getVault().checkAvailableCash(cash);
-        getVault().withdraw(cash);
+        this.vault.withdraw(cash);
     }
 
     public void deposit(Map<BaseNote, Integer> cashMap) {
         for (Map.Entry<BaseNote, Integer> cash : cashMap.entrySet()) {
-            this.getVault().addNote(cash.getKey(), cash.getValue());
+            this.vault.addNote(cash.getKey(), cash.getValue());
         }
     }
 }

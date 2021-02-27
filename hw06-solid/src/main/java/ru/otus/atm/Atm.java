@@ -1,6 +1,6 @@
 package ru.otus.atm;
 
-import ru.otus.atm.notes.BaseNote;
+import ru.otus.atm.notes.Banknotes;
 
 import java.util.Map;
 
@@ -22,8 +22,8 @@ public class Atm {
         this.vault.withdraw(cash);
     }
 
-    public void deposit(Map<BaseNote, Integer> cashMap) {
-        for (Map.Entry<BaseNote, Integer> cash : cashMap.entrySet()) {
+    public void deposit(Map<Banknotes, Integer> cashMap) {
+        for (Map.Entry<Banknotes, Integer> cash : cashMap.entrySet()) {
             this.vault.addNote(cash.getKey(), cash.getValue());
         }
     }

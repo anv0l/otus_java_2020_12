@@ -2,10 +2,7 @@ package ru.otus.atm;
 
 import org.junit.jupiter.api.*;
 import ru.otus.atm.exceptions.*;
-import ru.otus.atm.notes.FiftyDollars;
-import ru.otus.atm.notes.OneDollar;
-import ru.otus.atm.notes.OneHundredDollars;
-import ru.otus.atm.notes.TenDollars;
+import ru.otus.atm.notes.*;
 
 import java.util.Map;
 
@@ -15,9 +12,9 @@ public class AtmTest {
     @BeforeEach
     public void setupAtm() {
         atm = new Atm();
-        atm.addCartridge(new CashCartridge(new FiftyDollars(), 50));
-        atm.addCartridge(new CashCartridge(new TenDollars(), 3));
-        atm.addCartridge(new CashCartridge(new OneHundredDollars(), 30));
+        atm.addCartridge(new CashCartridge(Banknotes.FIFTY_DOLLARS, 50));
+        atm.addCartridge(new CashCartridge(Banknotes.TEN_DOLLARS, 3));
+        atm.addCartridge(new CashCartridge(Banknotes.ONE_HUNDRED_DOLLARS, 30));
         System.out.println("АТМ настроен");
     }
 
@@ -39,21 +36,22 @@ public class AtmTest {
     public void depositVariousNotesTest1() {
         float initialRemainder = atm.getVaultRemainder();
         atm.deposit(Map.ofEntries(
-                Map.entry(new FiftyDollars(), 10),
-                Map.entry(new TenDollars(), 20)
+                Map.entry(Banknotes.FIFTY_DOLLARS, 10),
+                Map.entry(Banknotes.TEN_DOLLARS, 20)
         ));
         float newRemainder = atm.getVaultRemainder();
 
         Assertions.assertEquals(initialRemainder +
-                new FiftyDollars().getValue() * 10 +
-                new TenDollars().getValue() * 20, newRemainder);
+                Banknotes.FIFTY_DOLLARS.getValue() * 10 +
+                Banknotes.TEN_DOLLARS.getValue() * 20, newRemainder);
     }
 
     @DisplayName("Вклад банкнот разных номиналов, но такой ячейки нет в банкомате")
     @Test
     public void depositVariousNotesTest2() {
-        Assertions.assertThrows(NoSuchCartridgeForNoteException.class,
-                () -> atm.deposit(Map.ofEntries(Map.entry(new OneDollar(), 20))));
+        AtmException e = Assertions.assertThrows(AtmException.class,
+                () -> atm.deposit(Map.ofEntries(Map.entry(Banknotes.ONE_DOLLAR, 20))));
+        Assertions.assertEquals(e.getErrorCode(), ErrorCode.NO_SUCH_CARTRIDGE_FOR_NOTE);
     }
 
     @DisplayName("Выдача запрошенной суммы разным кол-вом банкнот")
@@ -61,8 +59,8 @@ public class AtmTest {
     public void withdrawVariousNotesTest1() {
         float initialRemainder = atm.getVaultRemainder();
         atm.withdraw(150F);
-        float newRemainder = atm.getVaultRemainder();
 
+        float newRemainder = atm.getVaultRemainder();
         Assertions.assertEquals(initialRemainder - 150F, newRemainder);
     }
 
@@ -70,9 +68,10 @@ public class AtmTest {
     @Test
     public void withdrawVariousNotesTest2() {
         float initialRemainder = atm.getVaultRemainder();
-        Assertions.assertThrows(NotEnoughNotesInCartridgesException.class, () -> atm.withdraw(155F));
-        float newRemainder = atm.getVaultRemainder();
+        AtmException e = Assertions.assertThrows(AtmException.class, () -> atm.withdraw(155F));
+        Assertions.assertEquals(e.getErrorCode(), ErrorCode.NOT_ENOUGH_NOTES_IN_CARTRIDGE);
 
+        float newRemainder = atm.getVaultRemainder();
         Assertions.assertEquals(initialRemainder, newRemainder);
     }
 
@@ -80,11 +79,11 @@ public class AtmTest {
     @Test
     public void withdrawVariousNotesTest3()  {
         float initialRemainder = atm.getVaultRemainder();
-        //atm.withdraw(155000F);
-        Assertions.assertThrows(WithdrawalExceededVaultRemainderException.class,
+        AtmException e = Assertions.assertThrows(AtmException.class,
                 () -> atm.withdraw(155000F));
-        float newRemainder = atm.getVaultRemainder();
+        Assertions.assertEquals(e.getErrorCode(), ErrorCode.WITHDRAWAL_EXCEEDED_VAULT_REMAINDER);
 
+        float newRemainder = atm.getVaultRemainder();
         Assertions.assertEquals(initialRemainder, newRemainder);
     }
 
@@ -92,12 +91,11 @@ public class AtmTest {
     @Test
     public void withdrawVariousNotesTest4()  {
         float initialRemainder = atm.getVaultRemainder();
-        //atm.withdraw(155000F);
-        Assertions.assertThrows(NotEnoughNotesInCartridgesException.class,
+        AtmException e = Assertions.assertThrows(AtmException.class,
                 () -> atm.withdraw(190F));
-        float newRemainder = atm.getVaultRemainder();
+        Assertions.assertEquals(e.getErrorCode(), ErrorCode.NOT_ENOUGH_NOTES_IN_CARTRIDGE);
 
+        float newRemainder = atm.getVaultRemainder();
         Assertions.assertEquals(initialRemainder, newRemainder);
     }
-
 }

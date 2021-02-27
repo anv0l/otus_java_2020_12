@@ -1,24 +1,20 @@
 package ru.otus.atm;
 
-import ru.otus.atm.notes.BaseNote;
+import ru.otus.atm.exceptions.AtmException;
+import ru.otus.atm.exceptions.ErrorCode;
+import ru.otus.atm.notes.Banknotes;
 
 public class CashCartridge {
-    private final BaseNote noteType;
+    private final Banknotes noteType;
     private Integer noteCount;
 
-    private void checkNoteCount(Integer count) {
-        if (count < 0) {
-            throw new IllegalArgumentException("Количество банкнот не должно быть отрицательным");
-        }
-    }
-
-    public CashCartridge(BaseNote baseNote, Integer count) {
+    public CashCartridge(Banknotes baseNote, Integer count) {
         checkNoteCount(count);
         this.noteType = baseNote;
         this.noteCount = count;
     }
 
-    public BaseNote getNoteType() {
+    public Banknotes getNoteType() {
         return this.noteType;
     }
 
@@ -36,6 +32,17 @@ public class CashCartridge {
     }
 
     public void removeNotes(Integer count) {
-        this.noteCount -= count;
+        if (count <= this.noteCount) {
+            this.noteCount -= count;
+        }
+        else {
+            throw new AtmException("Нельзя снять больше банкнот, чем находится в ячейке!", ErrorCode.NOT_ENOUGH_NOTES_IN_CARTRIDGE);
+        }
+    }
+
+    private void checkNoteCount(Integer count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("Количество банкнот не должно быть отрицательным");
+        }
     }
 }

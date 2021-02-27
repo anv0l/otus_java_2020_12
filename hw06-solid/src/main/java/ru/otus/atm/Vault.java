@@ -1,7 +1,7 @@
 package ru.otus.atm;
 
 import ru.otus.atm.exceptions.*;
-import ru.otus.atm.notes.BaseNote;
+import ru.otus.atm.notes.Banknotes;
 
 import java.util.*;
 
@@ -13,31 +13,58 @@ public class Vault {
         this.vault = new TreeSet<>((o1, o2) -> o2.getNoteType().getValue().compareTo(o1.getNoteType().getValue()));
     }
 
+    public void withdraw(Float cash) {
+        checkAvailableCash(cash);
+        Map<CashCartridge, Integer> withdrawalMap = getWithdrawalMap(cash);
+        checkIfThereEnoughNotesInCartridges(withdrawalMap, cash);
+
+        for (Map.Entry<CashCartridge, Integer> withdrawal : withdrawalMap.entrySet()) {
+            removeNote(withdrawal.getKey().getNoteType(), withdrawal.getValue());
+        }
+    }
+
     public void addCartridge(CashCartridge cartridge) {
         CashCartridge newCartridge = new CashCartridge(cartridge.getNoteType(), cartridge.getNoteCount());
         this.vault.add(newCartridge);
     }
 
-    public void addNote(BaseNote note, Integer count) {
+    public Float getVaultRemainder() {
+        Float sum = 0F;
+        for (CashCartridge cashCartridge : this.vault) {
+            sum += cashCartridge.getNoteSum();
+        }
+        return sum;
+    }
+
+    public void checkAvailableCash(float cash) throws AtmException {
+        Float vaultRemainder = getVaultRemainder();
+        if (cash > vaultRemainder) {
+            throw new AtmException("В банкомате недостаточно средств: запрошено " + cash,
+                    ErrorCode.WITHDRAWAL_EXCEEDED_VAULT_REMAINDER);
+        }
+    }
+
+    public void addNote(Banknotes note, Integer count) throws AtmException {
         CashCartridge cartridgeToAddTo = null;
         for (CashCartridge cartridge : this.vault) {
-            if (note.getName().equals(cartridge.getNoteType().getName())) {
+            if (note.equals(cartridge.getNoteType())) {
                 cartridgeToAddTo = cartridge;
                 break;
             }
         }
         if (cartridgeToAddTo == null) {
-            throw new NoSuchCartridgeForNoteException("Банкомат не принимает " + note.getName());
+            throw new AtmException("Банкомат не принимает " + note.getName(),
+                    ErrorCode.NO_SUCH_CARTRIDGE_FOR_NOTE);
         }
         else {
             cartridgeToAddTo.addNotes(count);
         }
     }
 
-    private void removeNote(BaseNote note, Integer count) {
+    private void removeNote(Banknotes note, Integer count) {
         CashCartridge cartridgeToRemoveFrom = null;
         for (CashCartridge cartridge : this.vault) {
-            if (note.getName().equals(cartridge.getNoteType().getName())) {
+            if (note.equals(cartridge.getNoteType())) {
                 cartridgeToRemoveFrom = cartridge;
                 break;
             }
@@ -70,32 +97,8 @@ public class Vault {
             withdrawalCash += withdrawal.getKey().getNoteType().getValue() * withdrawal.getValue();
         }
         if (!withdrawalCash.equals(cash)) {
-            throw new NotEnoughNotesInCartridgesException("В ячейках не хватает банкнот для выдачи " + cash);
-        }
-    }
-
-    public void withdraw(Float cash) {
-        checkAvailableCash(cash);
-        Map<CashCartridge, Integer> withdrawalMap = getWithdrawalMap(cash);
-        checkIfThereEnoughNotesInCartridges(withdrawalMap, cash);
-
-        for (Map.Entry<CashCartridge, Integer> withdrawal : withdrawalMap.entrySet()) {
-            removeNote(withdrawal.getKey().getNoteType(), withdrawal.getValue());
-        }
-    }
-
-    public Float getVaultRemainder() {
-        Float sum = 0F;
-        for (CashCartridge cashCartridge : this.vault) {
-            sum += cashCartridge.getNoteSum();
-        }
-        return sum;
-    }
-
-    public void checkAvailableCash(float cash) throws WithdrawalExceededVaultRemainderException {
-        Float vaultRemainder = getVaultRemainder();
-        if (cash > vaultRemainder) {
-            throw new WithdrawalExceededVaultRemainderException("В банкомате недостаточно средств: запрошено " + cash);
+            throw new AtmException("В ячейках не хватает банкнот для выдачи " + cash,
+                    ErrorCode.NOT_ENOUGH_NOTES_IN_CARTRIDGE);
         }
     }
 }

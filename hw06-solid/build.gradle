@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.otus'
+version '1.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation ('org.junit.jupiter:junit-jupiter-api')
+    testImplementation ('org.junit.jupiter:junit-jupiter-engine')
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}

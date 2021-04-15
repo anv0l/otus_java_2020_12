@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData {
     private final String className;
@@ -29,14 +30,11 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData {
     }
 
     private Field getFieldId(Field[] declaredFields) {
-        Field found = null;
-        for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(PRIMARY_KEY_ID)) {
-                found = declaredField;
-                found.setAccessible(true);
-                break;
-            }
-        }
+        var found = Arrays.stream(declaredFields)
+                .filter(declaredField -> declaredField.isAnnotationPresent(PRIMARY_KEY_ID))
+                .findFirst()
+                .get();
+        found.setAccessible(true);
         return found;
     }
 
@@ -56,7 +54,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData {
         try {
             constructor = clazz.getConstructor();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Не найден конструктор!");
         }
         return constructor;
     }

@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script>
+        function addPhone() {
+            const phones = document.getElementById("phones");
+            const phone = document.getElementById("phone");
+
+            const opt = document.createElement("option");
+            opt.text = phone.value;
+            opt.value = phone.value;
+
+            phones.options.add(opt);
+            phone.value = "";
+            phone.focus();
+        }
+
+        function deletePhone() {
+            const phones = document.getElementById("phones");
+            for (let i = phones.options.length - 1; i >= 0; i--) {
+                if (phones.options[i].selected) phones.remove(i);
+            }
+        }
+
+        function deleteAllPhones() {
+            const p = document.getElementById("phones");
+            const phones = document.getElementById("phones");
+            for (let i = phones.options.length - 1; i >= 0; i--) {
+                phones.remove(i);
+            }
+        }
+
+        function selectAll() {
+            const phones = document.getElementById("phones");
+            for (let i = 0; i < phones.options.length; i++) {
+                phones.options[i].selected = true;
+            }
+        }
+    </script>
+    <title>Клиенты</title>
+</head>
+
+
+<form action="api/clients/add" method="post">
+    <table>
+        <tr>
+            <td>Клиент:
+            <td><input id="name" name="name" type="text">
+        </tr>
+        <tr>
+            <td>Адрес:
+            <td><input id="address" name="address" type="text">
+        </tr>
+        <tr>
+            <td>Телефоны:
+            <td>
+                <select id="phones" name="phones" size = 5 style="width:200px" multiple>
+                </select><br>
+                <input type="text" id="phone"><br>
+                <input type="button" value="добавить" onclick="addPhone()">&nbsp;
+                <input type="button" value="удалить" onclick="deletePhone()">&nbsp;
+                <input type="button" value="очистить" onclick="deleteAllPhones()">
+    </table>
+    <input type="submit" value="Добавить клиента" onclick="selectAll()">
+</form>
+
+<h4>Клиенты</h4>
+<table border="1" style="border-width:1; border-style:solid; border-collapse:collapse">
+    <tr>
+        <td>Client id<td>Client name<td>Client address<td>Client phones
+        <#list allClients?eval as client>
+    <tr>
+        <td>${client.id}
+        <td>${client.name}
+        <td>${client.address.street}
+        <td>
+            <#list client.phones as phone>
+            <div>${phone.number}</div>
+        </#list>
+    </#list>
+</table>
+</body>
+</html>

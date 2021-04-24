@@ -31,6 +31,8 @@ allprojects {
             }
             dependency("com.google.guava:guava:${Versions.guava}")
             dependency("com.google.code.gson:gson:${Versions.gson}")
+            dependency("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
+            dependency("org.testcontainers:postgresql:${Versions.testcontainers}")
             resolutionStrategy {
                 force("javax.servlet:servlet-api:2.4")
                 force("commons-logging:commons-logging:1.1.1")

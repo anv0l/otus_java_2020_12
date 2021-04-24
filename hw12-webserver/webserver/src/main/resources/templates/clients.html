@@ -1,0 +1,95 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script>
+        function hideAlert() {
+            document.getElementById("alert").style.display = "none";
+        }
+
+        function addPhone() {
+            const phones = document.getElementById("phones");
+            const phone = document.getElementById("phone");
+
+            const opt = document.createElement("option");
+            opt.text = phone.value;
+            opt.value = phone.value;
+
+            phones.options.add(opt);
+            phone.value = "";
+            phone.focus();
+        }
+
+        function deletePhone() {
+            const phones = document.getElementById("phones");
+            for (let i = phones.options.length - 1; i >= 0; i--) {
+                if (phones.options[i].selected) phones.remove(i);
+            }
+        }
+
+        function deleteAllPhones() {
+            const p = document.getElementById("phones");
+            const phones = document.getElementById("phones");
+            for (let i = phones.options.length - 1; i >= 0; i--) {
+                phones.remove(i);
+            }
+        }
+
+        function selectAll() {
+            const phones = document.getElementById("phones");
+            for (let i = 0; i < phones.options.length; i++) {
+                phones.options[i].selected = true;
+            }
+        }
+    </script>
+    <title>Клиенты</title>
+</head>
+
+
+<form action="clients" method="post">
+    <input type="hidden" name ="action" value="add">
+    <table>
+        <tr>
+            <td>Клиент:</td>
+            <td><input id="name" name="name" type="text"></td>
+        </tr>
+        <tr>
+            <td>Адрес:</td>
+            <td><input id="address" name="address" type="text"></td>
+        </tr>
+        <tr>
+            <td>Телефоны:</td>
+            <td>
+                <select id="phones" name="phones" size = 5 style="width:200px" multiple>
+                </select><br>
+                <input type="text" id="phone"><br>
+                <input type="button" value="добавить" onclick="addPhone()">&nbsp;
+                <input type="button" value="удалить" onclick="deletePhone()">&nbsp;
+                <input type="button" value="очистить" onclick="deleteAllPhones()">
+            </td>
+    </table>
+    <input type="submit" value="Добавить клиента" onclick="selectAll()">
+</form>
+
+<#if alertMessage??>
+<div id="alert" style="color: red">${alertMessage}<input type="button" onclick="hideAlert()" value="Ок"></div>
+</#if>
+
+<h4>Клиенты</h4>
+<table border="1" style="border-width:1; border-style:solid; border-collapse:collapse">
+    <tr>
+        <td>Client id</td><td>Client name</td><td>Client address</td><td>Client phones</td>
+    </tr>
+    <#list allClients as client>
+    <tr>
+        <td>${client.id}</td>
+        <td>${client.name}</td>
+        <td>${client.address.street}</td>
+        <td>
+            <#list client.phones as phone>
+            <div>${phone.number}</div>
+        </#list>
+        </td>
+    </tr>
+    </#list>
+</table>
+</body>
+</html>
